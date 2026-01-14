@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#111827" />
+  <meta name="description" content="Knee rehab tracker PWA. Track exercises, pain, swelling, notes, and progress." />
+  <title>Knee Rehab Tracker</title>
+
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">🦵</div>
+      <div>
+        <div class="title">Knee Rehab Tracker</div>
+        <div class="subtitle" id="subtitle">Offline-first PWA</div>
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <button class="btn" id="installBtn" hidden>Install</button>
+      <button class="btn btn-ghost" id="exportBtn">Export</button>
+      <label class="btn btn-ghost filebtn">
+        Import
+        <input id="importFile" type="file" accept="application/json" />
+      </label>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <div class="card-head">
+        <h2>Today</h2>
+        <div class="row">
+          <div class="pill" id="todayPill"></div>
+          <button class="btn btn-primary" id="saveTodayBtn">Save</button>
+        </div>
+      </div>
+
+      <div class="grid two">
+        <div>
+          <label class="label">Procedure (optional)</label>
+          <select id="procedureSelect" class="input">
+            <option value="general">General knee rehab</option>
+            <option value="acl">ACL reconstruction (generic)</option>
+            <option value="meniscus">Meniscus repair/trim (generic)</option>
+            <option value="tka">Total knee replacement (generic)</option>
+          </select>
+          <div class="hint">This only changes the starting template. You can edit everything.</div>
+        </div>
+
+        <div>
+          <label class="label">Current phase</label>
+          <select id="phaseSelect" class="input"></select>
+          <div class="hint">Pick the phase your surgeon/PT has you in.</div>
+        </div>
+      </div>
+
+      <div class="grid two">
+        <div>
+          <label class="label">Pain (0–10)</label>
+          <input id="painInput" class="input" type="number" min="0" max="10" step="1" />
+        </div>
+        <div>
+          <label class="label">Swelling</label>
+          <select id="swellingSelect" class="input">
+            <option value="none">None</option>
+            <option value="mild">Mild</option>
+            <option value="moderate">Moderate</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+      </div>
+
+      <label class="label">Notes</label>
+      <textarea id="notesInput" class="input textarea" placeholder="How did it feel? Any stiffness, catching, unusual pain?"></textarea>
+
+      <div class="divider"></div>
+
+      <div class="row spaced">
+        <h3>Exercises</h3>
+        <button class="btn btn-ghost" id="editTemplateBtn">Edit template</button>
+      </div>
+
+      <div id="exerciseList" class="list"></div>
+
+      <div class="divider"></div>
+
+      <div class="row spaced">
+        <div class="muted" id="saveStatus">Not saved yet.</div>
+        <button class="btn" id="resetTodayBtn" title="Clear today's form (does not delete history)">Reset today</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>Progress</h2>
+        <div class="row">
+          <div class="pill" id="streakPill"></div>
+        </div>
+      </div>
+
+      <div class="grid three">
+        <div class="stat">
+          <div class="stat-label">Days logged</div>
+          <div class="stat-value" id="daysLogged">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">This week</div>
+          <div class="stat-value" id="thisWeek">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Avg pain (14d)</div>
+          <div class="stat-value" id="avgPain">–</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <h3>History</h3>
+      <div id="historyList" class="history"></div>
+      <div class="hint">Tip: click a day to load it into the “Today” form (edit + re-save).</div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>Safety reminders</h2>
+      </div>
+      <ul class="bullets">
+        <li>Follow your surgeon/PT restrictions first. This app is just a tracker.</li>
+        <li>Stop if you get sharp pain, locking/catching, or rapidly increasing swelling.</li>
+        <li>Ice 15–20 minutes after sessions if swelling appears.</li>
+      </ul>
+    </section>
+  </main>
+
+  <!-- Template editor modal -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-head">
+        <h2 id="modalTitle">Edit rehab template</h2>
+        <button class="btn btn-ghost" id="closeModalBtn">Close</button>
+      </div>
+      <p class="hint">
+        Edit phases and exercises as JSON. Keep it simple. You can export first as a backup.
+      </p>
+      <textarea id="templateJson" class="input textarea code" spellcheck="false"></textarea>
+      <div class="row spaced">
+        <div class="muted" id="templateStatus"></div>
+        <div class="row">
+          <button class="btn" id="resetTemplateBtn">Reset template</button>
+          <button class="btn btn-primary" id="saveTemplateBtn">Save template</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
